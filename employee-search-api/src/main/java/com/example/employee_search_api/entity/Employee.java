@@ -19,7 +19,7 @@ public class Employee {
     public Employee()
     {
     }
-    public Employee(String name,String email,String department,String Skills) {
+    public Employee(String name,String email,String department,String skills) {
         this.name = name;
         this.email=email;
         this.department=department;
