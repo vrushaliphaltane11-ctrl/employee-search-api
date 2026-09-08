@@ -1,0 +1,87 @@
+pipeline {
+    agent any
+
+    tools {
+        jdk 'JDK-26'
+        maven 'Maven 3.9.16'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/vrushaliphaltane11-ctrl/employee-search-api'
+            }
+        }
+
+        stage('Verify Java') {
+            steps {
+                bat 'java -version'
+            }
+        }
+
+        stage('Verify Maven') {
+            steps {
+                bat 'mvn -version'
+            }
+        }
+
+        stage('Compile') {
+            steps {
+                dir('employee-search-api') {
+                    bat 'mvn clean compile'
+                }
+            }
+        }
+
+        stage('Unit Test') {
+            steps {
+                dir('employee-search-api') {
+                    bat 'mvn test'
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                dir('employee-search-api') {
+                    bat 'mvn package -DskipTests'
+                }
+            }
+        }
+
+        stage('Verify Jar') {
+            steps {
+                dir('employee-search-api') {
+                    bat 'dir target\\*.jar'
+                }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                dir('employee-search-api') {
+                    bat 'docker build -t employee-search-api:latest .'
+                }
+            }
+        }
+
+        stage('Docker Deploy') {
+            steps {
+
+                bat 'docker stop employee-search-api-container 2>NUL || exit /B 0'
+
+                bat 'docker rm employee-search-api-container 2>NUL || exit /B 0'
+
+                bat 'docker run -d --name employee-search-api-container -p 8082:8081 employee-search-api:latest'
+            }
+        }
+    }
+
+    post {
+        always {
+            junit 'employee-search-api/target/surefire-reports/*.xml'
+        }
+    }
+}
