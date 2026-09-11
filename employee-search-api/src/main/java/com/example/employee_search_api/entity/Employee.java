@@ -16,48 +16,50 @@ public class Employee {
     private String department;
     private String skills;
 
-    public Employee()
-    {
+    public Employee() {
     }
-    public Employee(String name,String email,String department,String skills) {
+
+    public Employee(String name, String email, String department, String skills) {
         this.name = name;
-        this.email=email;
-        this.department=department;
-        this.skills=skills;
+        this.email = email;
+        this.department = department;
+        this.skills = skills;
     }
-    public Long getId(){
+
+    public Long getId() {
         return id;
     }
-    public String getName(){
+
+    public String getName() {
         return name;
     }
-    public void setName(String name)
-    {
-      this.name=name;
+
+    public void setName(String name) {
+        this.name = name;
     }
-    public String getEmail()
-    {
+
+    public String getEmail() {
         return email;
     }
-    public void setEmail(String email)
-    {
-        this.email=email;
+
+    public void setEmail(String email) {
+        this.email = email;
     }
-    public String getDepartment()
-    {
+
+    public String getDepartment() {
         return department;
     }
-    public void setDepartment(String department)
-    {
-        this.department=department;
+
+    public void setDepartment(String department) {
+        this.department = department;
     }
-    public String getSkills()
-    {
+
+    public String getSkills() {
         return skills;
     }
-    public void setSkills(String skills)
-    {
-        this.skills=skills;
+
+    public void setSkills(String skills) {
+        this.skills = skills;
     }
 
 }

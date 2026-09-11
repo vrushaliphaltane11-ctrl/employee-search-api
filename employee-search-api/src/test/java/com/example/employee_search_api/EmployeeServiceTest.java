@@ -2,6 +2,7 @@ package com.example.employee_search_api;
 
 import com.example.employee_search_api.entity.Employee;
 import com.example.employee_search_api.repository.EmployeeRepository;
+import com.example.employee_search_api.repository.EmployeeSearchRepository;
 import com.example.employee_search_api.service.EmployeeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +22,9 @@ class EmployeeServiceTest {
     @Mock
     private EmployeeRepository employeeRepository;
 
+    @Mock
+    private EmployeeSearchRepository employeeSearchRepository;
+
     @InjectMocks
     private EmployeeService employeeService;
 
@@ -39,6 +43,7 @@ class EmployeeServiceTest {
         assertEquals("john@gmail.com", result.getEmail());
 
         verify(employeeRepository).save(employee);
+        verify(employeeSearchRepository).save(any());
     }
 
     @Test
@@ -101,9 +106,11 @@ class EmployeeServiceTest {
     void shouldDeleteEmployee() {
 
         doNothing().when(employeeRepository).deleteById(1L);
+        doNothing().when(employeeSearchRepository).deleteById(1L);
 
         employeeService.deleteEmployee(1L);
 
         verify(employeeRepository).deleteById(1L);
+        verify(employeeSearchRepository).deleteById(1L);
     }
 }

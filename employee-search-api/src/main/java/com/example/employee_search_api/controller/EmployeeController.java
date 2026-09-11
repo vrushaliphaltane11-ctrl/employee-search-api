@@ -3,7 +3,7 @@ package com.example.employee_search_api.controller;
 import com.example.employee_search_api.entity.Employee;
 import com.example.employee_search_api.service.EmployeeService;
 import org.springframework.web.bind.annotation.*;
-
+import com.example.employee_search_api.document.EmployeeDocument;
 import java.util.List;
 
 @RestController
@@ -26,6 +26,12 @@ public class EmployeeController {
         return employeeService.getAllEmployees();
     }
 
+
+    @GetMapping("/search")
+    public List<EmployeeDocument> searchEmployees(
+            @RequestParam String keyword) {
+        return employeeService.searchEmployees(keyword);
+    }
     @GetMapping("/{id}")
     public Employee getEmployee(@PathVariable Long id) {
         return employeeService.getEmployee(id);
