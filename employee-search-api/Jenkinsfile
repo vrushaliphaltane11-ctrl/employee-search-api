@@ -1,8 +1,9 @@
+
 pipeline {
     agent any
 
     tools {
-        jdk 'JDK-26'
+        jdk 'JDK-21'
         maven 'Maven 3.9.16'
     }
 
@@ -35,13 +36,30 @@ pipeline {
             }
         }
 
-        stage('Unit Test') {
+        stage('Unit Test + JaCoCo') {
             steps {
                 dir('employee-search-api') {
                     bat 'mvn test'
                 }
             }
         }
+
+       stage('SonarQube Analysis') {
+    steps {
+        dir('employee-search-api') {
+            withSonarQubeEnv('SonarQube') {
+                withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+                    bat '''
+                        mvn sonar:sonar ^
+                        -Dsonar.projectKey=employee-search-api ^
+                        -Dsonar.projectName="Employee Search API" ^
+                        -Dsonar.token=%SONAR_TOKEN%
+                    '''
+                }
+            }
+        }
+    }
+}
 
         stage('Package') {
             steps {
@@ -70,10 +88,13 @@ pipeline {
         stage('Docker Deploy') {
             steps {
 
+                // Stop old container if it is running
                 bat 'docker stop employee-search-api-container 2>NUL || exit /B 0'
 
+                // Remove old container
                 bat 'docker rm employee-search-api-container 2>NUL || exit /B 0'
 
+                // Start new container
                 bat 'docker run -d --name employee-search-api-container -p 8082:8081 employee-search-api:latest'
             }
         }
@@ -82,6 +103,9 @@ pipeline {
     post {
         always {
             junit 'employee-search-api/target/surefire-reports/*.xml'
+
+            archiveArtifacts artifacts: 'employee-search-api/target/site/jacoco/**',
+                             allowEmptyArchive: true
         }
     }
 }
